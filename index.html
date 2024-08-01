@@ -40,8 +40,8 @@
         .photoContainer {
             position: relative;
             display: inline-block;
-            width: 100px;
-            height: 75px;
+            width: 10rem;
+            height: 7.5rem;
             overflow: hidden;
         }
         .photo {
@@ -72,12 +72,12 @@
             text-align: center;
         }
         .stageButton, #captureButton {
-            padding: 4rem 8rem;
-            margin: 4rem;
+            padding: 2rem 4rem;
+            margin: 2rem;
             cursor: pointer;
             border: 1px solid black;
             background-color: #f0f0f0;
-            font-size: 4rem;
+            font-size: 2rem;
         }
         .stageButton.active {
             background-color: #d0d0d0;
@@ -131,11 +131,11 @@
 <body>
     <h1>Photo Sequence Capture</h1>
     <div id="stageContainer">
+        <div id="stageNavigation"></div>
         <h2 id="stageTitle">Stage 1</h2>
         <div id="videoContainer">
             <video id="video" autoplay></video>
         </div>
-        <div id="stageNavigation"></div>
         <button id="captureButton">Capture Photo</button>
     </div>
     <div id="photos"></div>
