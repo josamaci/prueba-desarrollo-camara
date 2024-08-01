@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Sequence Capture</title>
+    <style>
+        #videoContainer {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* Aspect ratio 16:9 */
+            overflow: hidden;
+            border: 1px solid black;
+            margin-bottom: 20px;
+        }
+        #video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #photos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .photoContainer {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 75px;
+            overflow: hidden;
+        }
+        .photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        .deleteButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 5px;
+        }
+        .deleteButton svg {
+            width: 16px;
+            height: 16px;
+            fill: red;
+        }
+        .hidden {
+            display: none;
+        }
+        #stageNavigation {
+            margin-top: 20px;
+        }
+        .stageButton {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 1px solid black;
+            background-color: #f0f0f0;
+        }
+        .stageButton.active {
+            background-color: #d0d0d0;
+        }
+        /* Styles for the modal */
+        #modalBackground {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 80%;
+            max-height: 80%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #modalContent {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        #modalImage {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        #modalClose {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #f1f1f1;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #modalClose:hover,
+        #modalClose:focus {
+            color: #bbb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Photo Sequence Capture</h1>
+    <div id="stageContainer">
+        <h2 id="stageTitle">Stage 1</h2>
+        <div id="videoContainer">
+            <video id="video" autoplay></video>
+        </div>
+        <button id="captureButton">Capture Photo</button>
+        <div id="stageNavigation"></div>
+    </div>
+    <div id="photos"></div>
+
+    <!-- Modal for displaying the full image -->
+    <div id="modalBackground"></div>
+    <div id="modal">
+        <span id="modalClose">&times;</span>
+        <img id="modalImage" alt="Full Size Image">
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('captureButton');
+        const photosContainer = document.getElementById('photos');
+        const stageTitle = document.getElementById('stageTitle');
+        const stageNavigation = document.getElementById('stageNavigation');
+
+        const modalBackground = document.getElementById('modalBackground');
+        const modal = document.getElementById('modal');
+        const modalImage = document.getElementById('modalImage');
+        const modalClose = document.getElementById('modalClose');
+
+        // Configuration for stages
+        const stagesConfig = [
+            { name: 'Stage 1', minPhotos: 2 },
+            { name: 'Stage 2', minPhotos: 3 },
+            { name: 'Stage 3', minPhotos: 1 }
+        ];
+
+        const photosByStage = {};
+        const maxStages = stagesConfig.length;
+        let currentStage = 0;
+
+        // Initialize stages
+        stagesConfig.forEach((stage, index) => {
+            photosByStage[index] = [];
+        });
+
+        // Access the camera with the front camera option
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 4096 }, height: { ideal: 2160 } } })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing the camera', error);
+            });
+
+        // Capture photo
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL('image/png');
+            img.classList.add('photo');
+
+            // Store photo in current stage
+            if (!photosByStage[currentStage]) {
+                photosByStage[currentStage] = [];
+            }
+            photosByStage[currentStage].push(img.src);
+
+            updatePhotosContainer();
+            updateButtons();
+        });
+
+        // Update the photo container with photos of the current stage
+        function updatePhotosContainer() {
+            photosContainer.innerHTML = '';
+            photosByStage[currentStage].forEach((photoSrc, index) => {
+                const photoContainer = document.createElement('div');
+                photoContainer.classList.add('photoContainer');
+
+                const img = document.createElement('img');
+                img.src = photoSrc;
+                img.classList.add('photo');
+                img.addEventListener('click', () => {
+                    openModal(photoSrc);
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('deleteButton');
+                deleteButton.innerHTML = `
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 6h18v2H3V6zm3 3h12v12c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V9zm3 0v12h6V9H9zm1 0v10h2V9h-2zm4 0v10h2V9h-2zm1-5h-6l-1-1H5v2h14V3h-3l-1 1z"/>
+                    </svg>`;
+                deleteButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deletePhoto(index);
+                });
+
+                photoContainer.appendChild(img);
+                photoContainer.appendChild(deleteButton);
+                photosContainer.appendChild(photoContainer);
+            });
+        }
+
+        // Open modal with full-size image
+        function openModal(photoSrc) {
+            modalBackground.style.display = 'block';
+            modal.style.display = 'block';
+            modalImage.src = photoSrc;
+        }
+
+        // Close modal
+        modalClose.addEventListener('click', () => {
+            modalBackground.style.display = 'none';
+            modal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside of the image
+        window.addEventListener('click', (e) => {
+            if (e.target == modalBackground) {
+                modalBackground.style.display = 'none';
+                modal.style.display = 'none';
+            }
+        });
+
+        // Delete a photo from the current stage
+        function deletePhoto(index) {
+            photosByStage[currentStage].splice(index, 1);
+            updatePhotosContainer();
+            updateButtons();
+        }
+
+        // Update visibility of buttons and navigation based on the current stage
+        function updateButtons() {
+            const currentStageConfig = stagesConfig[currentStage];
+            const hasEnoughPhotos = photosByStage[currentStage].length >= currentStageConfig.minPhotos;
+
+            // Disable the button for the next stage if the current stage does not have enough photos
+            if (currentStage < maxStages - 1) {
+                const nextStageButton = document.getElementById(`stageButton${currentStage + 1}`);
+                if (nextStageButton) {
+                    nextStageButton.disabled = !hasEnoughPhotos;
+                }
+            }
+
+            if (hasEnoughPhotos && currentStage < maxStages - 1) {
+                createStageButton(currentStage + 1);
+            }
+        }
+
+        // Create stage navigation buttons
+        function createStageButton(stage) {
+            if (!photosByStage[stage]) {
+                photosByStage[stage] = [];
+            }
+
+            // Create button if it doesn't exist
+            if (!document.getElementById(`stageButton${stage}`)) {
+                const stageButton = document.createElement('button');
+                stageButton.id = `stageButton${stage}`;
+                stageButton.textContent = stagesConfig[stage].name;
+                stageButton.classList.add('stageButton');
+                stageButton.disabled = currentStage < stage && photosByStage[currentStage].length < stagesConfig[currentStage].minPhotos;
+                stageButton.addEventListener('click', () => {
+                    currentStage = stage;
+                    stageTitle.textContent = stagesConfig[currentStage].name;
+                    updatePhotosContainer();
+                    highlightCurrentStageButton();
+                });
+                stageNavigation.appendChild(stageButton);
+            }
+
+            highlightCurrentStageButton();
+        }
+
+        // Highlight the current stage button
+        function highlightCurrentStageButton() {
+            const buttons = document.querySelectorAll('.stageButton');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            const currentButton = document.getElementById(`stageButton${currentStage}`);
+            if (currentButton) {
+                currentButton.classList.add('active');
+            }
+        }
+
+        // Initialize stage navigation
+        stagesConfig.forEach((stage, index) => {
+            if (index === 0) {
+                stageTitle.textContent = stage.name;
+            }
+            createStageButton(index);
+        });
+
+    </script>
+</body>
+</html>
