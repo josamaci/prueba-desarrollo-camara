@@ -170,7 +170,7 @@
         });
 
         // Access the camera with the front camera option
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 4096 }, height: { ideal: 2160 } } })
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 4096 }, height: { ideal: 2160 } } })
             .then(stream => {
                 video.srcObject = stream;
             })
