@@ -127,6 +127,9 @@ notCoveredCheckbox.addEventListener('change', () => {
         additionalOptions.style.display = 'block';
     } else {
         additionalOptions.style.display = 'none';
+        applyPartsCheckbox.checked=false;
+        applyLaborCheckbox.checked=false;
+        damageLevelSelect.value='Leve';
     }
 });
 
