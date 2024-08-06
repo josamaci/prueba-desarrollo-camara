@@ -50,12 +50,11 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
     });
 
     captureButton.addEventListener('click', async () => {
-        showLoader();
-    
+        await showLoader();
         try {
             await processPhoto();
         } finally {
-            hideLoader();
+            await hideLoader();
         }
     });
 
