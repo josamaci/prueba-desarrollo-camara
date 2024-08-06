@@ -1,0 +1,209 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+#stageContainer {
+    position: relative;
+}
+
+#videoContainer {
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* Aspect ratio 4:3 */
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#photos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.photoContainer {
+    position: relative;
+    display: inline-block;
+    width: 45%;
+    margin: 5px;
+    height: 200px;
+    overflow: hidden;
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.deleteButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+.deleteButton svg {
+    width: 2rem;
+    height: 2rem;
+    fill: red;
+}
+
+.hidden {
+    display: none;
+}
+
+#stageNavigation {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.stageButton {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    cursor: pointer;
+    border: 1px solid black;
+    background-color: #f0f0f0;
+    font-size: 1rem;
+    height: 4rem;
+    width: auto;
+    min-width: 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stageButton.active {
+    background-color: #d0d0d0;
+}
+
+#modalBackground {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+#modal {
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+    background-color: rgba(255, 255, 255, 0.897);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#modalImage {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+#modalClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #f1f1f1;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#buttons{
+    display: flex;
+    justify-content: flex-end;
+}
+
+#modalClose:hover,
+#modalClose:focus {
+    color: #bbb;
+    text-decoration: none;
+}
+
+
+#additionalOptions {
+    display: none;
+}
+
+.modal-body {
+    position: relative;
+}
+
+#captureButton {
+    background-color: #00aaff;
+    border: none;
+    font-size: 1.5rem;
+}
+
+#captureButton:hover {
+    background-color: #0088cc;
+}
+
+#captureButton:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+@media (orientation: portrait) {
+    #videoContainer {
+        width: 100%;
+        padding-top: 177.77%; /* Aspect ratio 9:16 */
+    }
+
+    #captureButton {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (orientation: landscape) {
+    #videoContainer {
+        width: 75%;
+        padding-top: 42.1875%; /* Aspect ratio 16:9 */
+        left: 10%;
+    }
+
+    #captureButton {
+        position: absolute;
+        bottom: 30%;
+        right: 2.5%;
+        transform: none;
+    }
+}
