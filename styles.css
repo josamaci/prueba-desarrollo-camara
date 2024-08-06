@@ -119,13 +119,17 @@ h1, h2 {
     z-index: 2;
     left: 50%;
     top: 50%;
-    font-size: 22px;
+    font-size: 25px;
     transform: translate(-50%, -50%);
     max-width: 95%;
     max-height: 95%;
     background-color: rgba(255, 255, 255, 0.897);
     border-radius: 10px;
     overflow: auto;
+}
+
+#damageLevel{
+    font-size: 25px !important;
 }
 
 #modalImage {
@@ -140,7 +144,7 @@ h1, h2 {
     top: 10px;
     right: 10px;
     color: #f1f1f1;
-    font-size: 30px;
+    font-size: 50px;
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
@@ -169,7 +173,7 @@ h1, h2 {
 #captureButton {
     background-color: #00aaff;
     border: none;
-    font-size: 50px;
+    font-size: 60px;
 }
 
 #captureButton:hover {
@@ -203,9 +207,10 @@ h1, h2 {
         width: 75%;
         padding-top: 42.1875%; /* Aspect ratio 16:9 */
         left: 10%;
-    }
+    }  
 
     #captureButton {
+        font-size: 30px;
         position: absolute;
         bottom: 30%;
         right: 2.5%;
