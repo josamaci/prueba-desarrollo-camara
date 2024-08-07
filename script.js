@@ -15,6 +15,8 @@ const additionalOptions = document.getElementById('additionalOptions');
 const applyPartsCheckbox = document.getElementById('applyPartsCheckbox');
 const applyLaborCheckbox = document.getElementById('applyLaborCheckbox');
 const damageLevelSelect = document.getElementById('damageLevel');
+const loaderContainer = document.getElementById('loaderContainer');
+
 let actualPhotoSrc = {
     nombre: '',
     notCovered: false,
@@ -47,33 +49,60 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         console.error('Error accessing the camera', error);
     });
 
-captureButton.addEventListener('click', () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    captureButton.addEventListener('click', async () => {
+        await showLoader();
+        try {
+            await processPhoto();
+        } finally {
+            await hideLoader();
+        }
+    });
 
-    const img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.classList.add('photo');
-    const tmpFile = {
-        nombre: stageTitle+(new Date().getTime()),
-        notCovered: false,
-        applyParts: false,
-        applyLabor: false,
-        damageLevel: 'Leve',
-        img: img.src
+    function showLoader() {
+        loaderContainer.style.display = 'flex';
+        captureButton.disabled = true;
+    }
+    
+    function hideLoader() {
+        loaderContainer.style.display = 'none';
+        captureButton.disabled = false;
     }
 
-    if (!photosByStage[currentStage]) {
-        photosByStage[currentStage] = [];
+    async function processPhoto() {
+        return new Promise((resolve, reject) => {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL('image/png');
+                img.classList.add('photo');
+                const tmpFile = {
+                    nombre: stageTitle.textContent + (new Date().getTime()),
+                    notCovered: false,
+                    applyParts: false,
+                    applyLabor: false,
+                    damageLevel: 'Leve',
+                    img: img.src
+                };
+    
+                if (!photosByStage[currentStage]) {
+                    photosByStage[currentStage] = [];
+                }
+                photosByStage[currentStage].push(tmpFile);
+    
+                updatePhotosContainer();
+                updateButtons();
+                resolve();
+            } catch (error) {
+                console.error('Error processing photo', error);
+                reject(error);
+            }
+        });
     }
-    photosByStage[currentStage].push(tmpFile);
-
-    updatePhotosContainer();
-    updateButtons();
-});
 
 function updatePhotosContainer() {
     photosContainer.innerHTML = '';
@@ -127,6 +156,9 @@ notCoveredCheckbox.addEventListener('change', () => {
         additionalOptions.style.display = 'block';
     } else {
         additionalOptions.style.display = 'none';
+        applyPartsCheckbox.checked=false;
+        applyLaborCheckbox.checked=false;
+        damageLevelSelect.value='Leve';
     }
 });
 
