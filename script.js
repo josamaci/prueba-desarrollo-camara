@@ -49,29 +49,29 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         console.error('Error accessing the camera', error);
     });
 
-    async function showLoader() {
+    function showLoader() {
         loaderContainer.style.display = 'flex';
         console.log(loaderContainer.style.display+" MOSTRAR "+ new Date().getTime())
         captureButton.disabled = true;
     }
     
-    async function hideLoader() {
+    function hideLoader() {
         loaderContainer.style.display = 'none';
         console.log(loaderContainer.style.display+" ESCONDER "+ new Date().getTime())
         captureButton.disabled = false;
     }
     
     captureButton.addEventListener('click', async () => {
-        await showLoader();
         try {
             await processPhoto();
-        } finally {
-            await hideLoader();
+        } catch {
+            console.error('Error processing photo', error);
         }
     });
     
 
     async function processPhoto() {
+        showLoader();
         return new Promise((resolve, reject) => {
             try {
                 const canvas = document.createElement('canvas');
@@ -99,8 +99,10 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
     
                 updatePhotosContainer();
                 updateButtons();
+                setTimeout(() => {hideLoader(); }, 1000);
                 resolve();
             } catch (error) {
+                hideLoader();
                 console.error('Error processing photo', error);
                 reject(error);
             }
