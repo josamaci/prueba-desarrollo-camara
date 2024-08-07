@@ -49,6 +49,18 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         console.error('Error accessing the camera', error);
     });
 
+    async function showLoader() {
+        loaderContainer.style.display = 'flex';
+        console.log(loaderContainer.style.display+" MOSTRAR "+ new Date().getTime())
+        captureButton.disabled = true;
+    }
+    
+    async function hideLoader() {
+        loaderContainer.style.display = 'none';
+        console.log(loaderContainer.style.display+" ESCONDER "+ new Date().getTime())
+        captureButton.disabled = false;
+    }
+    
     captureButton.addEventListener('click', async () => {
         await showLoader();
         try {
@@ -57,16 +69,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
             await hideLoader();
         }
     });
-
-    function showLoader() {
-        loaderContainer.style.display = 'flex';
-        captureButton.disabled = true;
-    }
     
-    function hideLoader() {
-        loaderContainer.style.display = 'none';
-        captureButton.disabled = false;
-    }
 
     async function processPhoto() {
         return new Promise((resolve, reject) => {
@@ -106,11 +109,9 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
 
 function updatePhotosContainer() {
     photosContainer.innerHTML = '';
-    console.log(photosByStage)
     photosByStage[currentStage].forEach((photoSrc, index) => {
         const photoContainer = document.createElement('div');
         photoContainer.classList.add('photoContainer');
-        console.log(photoSrc)
         const img = document.createElement('img');
         img.src = photoSrc.img;
         img.classList.add('photo');
@@ -151,7 +152,6 @@ function openModal(photoSrc) {
 }
 
 notCoveredCheckbox.addEventListener('change', () => {
-    console.log(notCoveredCheckbox.checked)
     if (notCoveredCheckbox.checked) {
         additionalOptions.style.display = 'block';
     } else {
