@@ -71,7 +71,6 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
     
 
     async function processPhoto() {
-        showLoader();
         return new Promise((resolve, reject) => {
             try {
                 const canvas = document.createElement('canvas');
