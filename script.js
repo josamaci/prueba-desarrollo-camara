@@ -98,10 +98,10 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
     
                 updatePhotosContainer();
                 updateButtons();
-                setTimeout(() => {hideLoader(); }, 1000);
+                setTimeout(() => {hideLoader(); }, 1500);
                 resolve();
             } catch (error) {
-                hideLoader();
+                setTimeout(() => {hideLoader(); }, 1500);
                 console.error('Error processing photo', error);
                 reject(error);
             }
