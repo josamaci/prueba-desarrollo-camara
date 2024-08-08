@@ -100,7 +100,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         console.error('Error accessing the camera', error);
     });
 
-    function showLoader() {
+    /*function showLoader() {
         loaderContainer.style.display = 'flex';
         console.log(loaderContainer.style.display+" MOSTRAR "+ new Date().getTime())
         captureButton.disabled = true;
@@ -110,7 +110,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         loaderContainer.style.display = 'none';
         console.log(loaderContainer.style.display+" ESCONDER "+ new Date().getTime())
         captureButton.disabled = false;
-    }
+    }*/
     
     captureButton.addEventListener('click', () => {
         processPhoto();
@@ -178,7 +178,7 @@ function updatePhotosContainer() {
 }
 
 // Función para mostrar el modal de confirmación de eliminación
-function showDeleteConfirmationModal(index) {
+/*function showDeleteConfirmationModal(index) {
     photoToDeleteIndex = index;
     modalBackground.style.display = 'block';
     deleteConfirmationModal.style.display = 'block';
@@ -192,7 +192,7 @@ function hideDeleteConfirmationModal() {
 }
 
 deleteModalClose.addEventListener('click', hideDeleteConfirmationModal);
-cancelDeleteButton.addEventListener('click', hideDeleteConfirmationModal);
+cancelDeleteButton.addEventListener('click', hideDeleteConfirmationModal);*/
 
 confirmDeleteButton.addEventListener('click', () => {
     if (photoToDeleteIndex !== null) {
@@ -293,7 +293,7 @@ function createStageButton(stage) {
     highlightCurrentStageButton();
 }
 
-function loadStateFromLocalStorage() {
+/*function loadStateFromLocalStorage() {
     const savedState = localStorage.getItem('photoAppState');
     if (savedState) {
         const state = JSON.parse(savedState);
@@ -303,7 +303,7 @@ function loadStateFromLocalStorage() {
         updatePhotosContainer();
         highlightCurrentStageButton();
     }
-}
+}*/
 
 // Highlight the current stage button
 function highlightCurrentStageButton() {
