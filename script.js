@@ -69,6 +69,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         }
     });
     
+    //onclick="showLoader()";
 
     async function processPhoto() {
         return new Promise((resolve, reject) => {
@@ -98,10 +99,10 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
     
                 updatePhotosContainer();
                 updateButtons();
-                setTimeout(() => {hideLoader(); }, 1500);
+                //setTimeout(() => {hideLoader(); }, 1500);
                 resolve();
             } catch (error) {
-                setTimeout(() => {hideLoader(); }, 1500);
+                //setTimeout(() => {hideLoader(); }, 1500);
                 console.error('Error processing photo', error);
                 reject(error);
             }
