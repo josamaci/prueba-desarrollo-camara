@@ -62,12 +62,12 @@ stagesConfig.forEach((stage, index) => {
     photosByStage[index] = [];
 });
 
-function saveToLocalStorage() {
+/*function saveToLocalStorage() {
     localStorage.setItem('photosByStage', JSON.stringify(photosByStage));
     localStorage.setItem('currentStage', currentStage);
-}
+}*/
 
-function loadFromLocalStorage() {
+/*function loadFromLocalStorage() {
     const storedPhotosByStage = localStorage.getItem('photosByStage');
     const storedCurrentStage = localStorage.getItem('currentStage');
 
@@ -83,9 +83,9 @@ function loadFromLocalStorage() {
     if (storedCurrentStage) {
         currentStage = parseInt(storedCurrentStage, 10);
     }
-}
+}*/
 
-loadFromLocalStorage();
+//loadFromLocalStorage();
 
 navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 4096 }, height: { ideal: 2160 } } })
     .then(stream => {
@@ -139,7 +139,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
 
         updatePhotosContainer();
         updateButtons();
-        saveToLocalStorage();
+        //saveToLocalStorage();
     }
 
 function updatePhotosContainer() {
@@ -221,7 +221,7 @@ modalSaveButton.addEventListener('click', () => {
 function deletePhoto(index) {
     photosByStage[currentStage].splice(index, 1);
     updatePhotosContainer();
-    saveToLocalStorage();
+    //saveToLocalStorage();
     updateButtons();
 }
 
