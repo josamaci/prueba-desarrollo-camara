@@ -84,7 +84,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
                 img.src = canvas.toDataURL('image/png');
                 img.classList.add('photo');
                 const tmpFile = {
-                    nombre: stageTitle.textContent + (new Date().getTime()),
+                    nombre: photosByStage[currentStage].name + (new Date().getTime()),
                     notCovered: false,
                     applyParts: false,
                     applyLabor: false,
@@ -219,7 +219,7 @@ function createStageButton(stage) {
         stageButton.disabled = currentStage < stage && photosByStage[currentStage].length < stagesConfig[currentStage].minPhotos;
         stageButton.addEventListener('click', () => {
             currentStage = stage;
-            stageTitle.textContent = stagesConfig[currentStage].name;
+            stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
             updatePhotosContainer();
             highlightCurrentStageButton();
         });
@@ -244,7 +244,8 @@ function highlightCurrentStageButton() {
 // Initialize stage navigation
 stagesConfig.forEach((stage, index) => {
     if (index === 0) {
-        stageTitle.textContent = stage.name;
+        stageTitle.textContent = stagesConfig[index].name + ` (${photosByStage[index].length}/${stagesConfig[index].minPhotos})`;
+        //stageTitle.textContent = stage.name;
     }
     createStageButton(index);
 });

@@ -247,8 +247,8 @@ h1, h2 {
 
 @media (orientation: landscape) {
     #videoContainer {
-        width: 70%;
-        padding-top: 39.375%; /* Aspect ratio 16:9 */
+        width: 80%;
+        padding-top: 45%; /* Aspect ratio 16:9 */
         left: 10%;
     }  
 
@@ -256,7 +256,7 @@ h1, h2 {
         font-size: 30px;
         position: absolute;
         bottom: 35%;
-        right: 2.5%;
+        right: 2%;
         transform: none;
     }
 }
