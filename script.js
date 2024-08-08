@@ -178,7 +178,7 @@ function updatePhotosContainer() {
 }
 
 // Función para mostrar el modal de confirmación de eliminación
-/*function showDeleteConfirmationModal(index) {
+function showDeleteConfirmationModal(index) {
     photoToDeleteIndex = index;
     modalBackground.style.display = 'block';
     deleteConfirmationModal.style.display = 'block';
@@ -191,15 +191,13 @@ function hideDeleteConfirmationModal() {
     photoToDeleteIndex = -1;
 }
 
-deleteModalClose.addEventListener('click', hideDeleteConfirmationModal);
-cancelDeleteButton.addEventListener('click', hideDeleteConfirmationModal);*/
+cancelDeleteButton.addEventListener('click', hideDeleteConfirmationModal);
 
 confirmDeleteButton.addEventListener('click', () => {
-    if (photoToDeleteIndex !== null) {
+    if (photoToDeleteIndex !== -1) {
         photosByStage[currentStage].splice(photoToDeleteIndex, 1);
         updatePhotosContainer();
         updateButtons();
-        //saveToLocalStorage();
     }
     hideDeleteConfirmationModal();
 });
