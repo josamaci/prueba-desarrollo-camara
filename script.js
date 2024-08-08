@@ -27,10 +27,31 @@ let actualPhotoSrc = {
 };
 
 const stagesConfig = [
-    { name: 'Zona trasera', minPhotos: 2 },
-    { name: 'Parte delantera superior derecha', minPhotos: 3 },
-    { name: 'otro ejemplo medio largo para prueba ', minPhotos: 1 },
-    { name: 'Zona trasera', minPhotos: 2 }
+    { name: 'Patente Trasera', minPhotos: 1 },
+    { name: 'Trasera', minPhotos: 2 },
+    { name: 'Lateral Trasero', minPhotos: 2 },
+    { name: 'Neumatico Trasero', minPhotos: 1 },
+    { name: 'Puerta Trasera', minPhotos: 1 },
+    { name: 'Puerta Delantera', minPhotos: 1 },
+    { name: 'Costado Delantero', minPhotos: 1 },
+    { name: 'Patente Delantera', minPhotos: 1 },
+    { name: 'Frontal', minPhotos: 1 },
+    { name: 'Capot', minPhotos: 1 },
+    { name: 'Parabrisas', minPhotos: 1 },
+    { name: 'Neumatico Delantero', minPhotos: 1 },
+    { name: 'Costado Delantero', minPhotos: 1 },
+    { name: 'Puerta Delantera', minPhotos: 1 },
+    { name: 'Puerta Trasera', minPhotos: 1 },
+    { name: 'Costado Trasero', minPhotos: 1 },
+    { name: 'Panel', minPhotos: 1 },
+    { name: 'Kilometraje', minPhotos: 1 },
+    { name: 'Palanca de Cambios', minPhotos: 1 },
+    { name: 'Asientos', minPhotos: 2 },
+    { name: 'Techo Interior', minPhotos: 2 },
+    { name: 'Extintor', minPhotos: 1 },
+    { name: 'Rueda Repuesto', minPhotos: 1 },
+    { name: 'Herramientas', minPhotos: 1 }
+
 ];
 
 const photosByStage = {};
