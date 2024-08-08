@@ -29,7 +29,7 @@ let actualPhotoSrc = {
 const stagesConfig = [
     { name: 'Zona trasera', minPhotos: 2 },
     { name: 'Parte delantera superior derecha', minPhotos: 3 },
-    { name: 'otro ejemplo medio largo para prueba', minPhotos: 1 },
+    { name: 'otro ejemplo medio largo para prueba ', minPhotos: 1 },
     { name: 'Zona trasera', minPhotos: 2 }
 ];
 
