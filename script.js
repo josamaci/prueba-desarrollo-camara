@@ -54,13 +54,38 @@ const stagesConfig = [
 
 ];
 
-const photosByStage = {};
+let photosByStage = {};
 const maxStages = stagesConfig.length;
 let currentStage = 0;
 
 stagesConfig.forEach((stage, index) => {
     photosByStage[index] = [];
 });
+
+function saveToLocalStorage() {
+    localStorage.setItem('photosByStage', JSON.stringify(photosByStage));
+    localStorage.setItem('currentStage', currentStage);
+}
+
+function loadFromLocalStorage() {
+    const storedPhotosByStage = localStorage.getItem('photosByStage');
+    const storedCurrentStage = localStorage.getItem('currentStage');
+
+    if (storedPhotosByStage) {
+        photosByStage = JSON.parse(storedPhotosByStage);
+    } else {
+        photosByStage = {};
+        stagesConfig.forEach((stage, index) => {
+            photosByStage[index] = [];
+        });
+    }
+
+    if (storedCurrentStage) {
+        currentStage = parseInt(storedCurrentStage, 10);
+    }
+}
+
+loadFromLocalStorage();
 
 navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 4096 }, height: { ideal: 2160 } } })
     .then(stream => {
@@ -82,12 +107,8 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         captureButton.disabled = false;
     }
     
-    captureButton.addEventListener('click', async () => {
-        try {
-            await processPhoto();
-        } catch {
-            console.error('Error processing photo', error);
-        }
+    captureButton.addEventListener('click', () => {
+        processPhoto();
     });
     
     //onclick="showLoader()";
@@ -118,6 +139,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
 
         updatePhotosContainer();
         updateButtons();
+        saveToLocalStorage();
     }
 
 function updatePhotosContainer() {
@@ -199,6 +221,7 @@ modalSaveButton.addEventListener('click', () => {
 function deletePhoto(index) {
     photosByStage[currentStage].splice(index, 1);
     updatePhotosContainer();
+    saveToLocalStorage();
     updateButtons();
 }
 
@@ -241,6 +264,18 @@ function createStageButton(stage) {
     highlightCurrentStageButton();
 }
 
+function loadStateFromLocalStorage() {
+    const savedState = localStorage.getItem('photoAppState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        photosByStage = state.photosByStage || {};
+        currentStage = state.currentStage || 0;
+        stageTitle.textContent = stagesConfig[currentStage].name;
+        updatePhotosContainer();
+        highlightCurrentStageButton();
+    }
+}
+
 // Highlight the current stage button
 function highlightCurrentStageButton() {
     const buttons = document.querySelectorAll('.stageButton');
@@ -261,3 +296,4 @@ stagesConfig.forEach((stage, index) => {
     }
     createStageButton(index);
 });
+
