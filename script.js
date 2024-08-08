@@ -16,6 +16,11 @@ const applyPartsCheckbox = document.getElementById('applyPartsCheckbox');
 const applyLaborCheckbox = document.getElementById('applyLaborCheckbox');
 const damageLevelSelect = document.getElementById('damageLevel');
 const loaderContainer = document.getElementById('loaderContainer');
+const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
+const deleteModalClose = document.getElementById('deleteModalClose');
+const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+let photoToDeleteIndex = -1;
 
 let actualPhotoSrc = {
     nombre: '',
@@ -172,6 +177,37 @@ function updatePhotosContainer() {
     });
 }
 
+// Función para mostrar el modal de confirmación de eliminación
+function showDeleteConfirmationModal(index) {
+    photoToDeleteIndex = index;
+    modalBackground.style.display = 'block';
+    deleteConfirmationModal.style.display = 'block';
+}
+
+// Función para ocultar el modal de confirmación de eliminación
+function hideDeleteConfirmationModal() {
+    modalBackground.style.display = 'none';
+    deleteConfirmationModal.style.display = 'none';
+    photoToDeleteIndex = -1;
+}
+
+deleteModalClose.addEventListener('click', hideDeleteConfirmationModal);
+cancelDeleteButton.addEventListener('click', hideDeleteConfirmationModal);
+
+confirmDeleteButton.addEventListener('click', () => {
+    if (photoToDeleteIndex !== null) {
+        photosByStage[currentStage].splice(photoToDeleteIndex, 1);
+        updatePhotosContainer();
+        updateButtons();
+        //saveToLocalStorage();
+    }
+    hideDeleteConfirmationModal();
+});
+
+function deletePhoto(index) {
+    showDeleteConfirmationModal(index);
+}
+
 function openModal(photoSrc) {
     console.log(photoSrc)
     actualPhotoSrc = photoSrc;
@@ -217,13 +253,6 @@ modalSaveButton.addEventListener('click', () => {
     modalBackground.style.display = 'none';
     modal.style.display = 'none';
 });
-
-function deletePhoto(index) {
-    photosByStage[currentStage].splice(index, 1);
-    updatePhotosContainer();
-    //saveToLocalStorage();
-    updateButtons();
-}
 
 function updateButtons() {
     const currentStageConfig = stagesConfig[currentStage];
