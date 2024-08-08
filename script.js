@@ -71,45 +71,36 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
     
     //onclick="showLoader()";
 
-    async function processPhoto() {
-        return new Promise((resolve, reject) => {
-            try {
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-                const img = document.createElement('img');
-                img.src = canvas.toDataURL('image/png');
-                img.classList.add('photo');
-                const tmpFile = {
-                    nombre: photosByStage[currentStage].name + (new Date().getTime()),
-                    notCovered: false,
-                    applyParts: false,
-                    applyLabor: false,
-                    damageLevel: 'Leve',
-                    img: img.src
-                };
-    
-                if (!photosByStage[currentStage]) {
-                    photosByStage[currentStage] = [];
-                }
-                photosByStage[currentStage].push(tmpFile);
-    
-                updatePhotosContainer();
-                updateButtons();
-                //setTimeout(() => {hideLoader(); }, 1500);
-                resolve();
-            } catch (error) {
-                //setTimeout(() => {hideLoader(); }, 1500);
-                console.error('Error processing photo', error);
-                reject(error);
-            }
-        });
+    function processPhoto() {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL('image/png');
+        img.classList.add('photo');
+        const tmpFile = {
+            nombre: photosByStage[currentStage].name + (new Date().getTime()),
+            notCovered: false,
+            applyParts: false,
+            applyLabor: false,
+            damageLevel: 'Leve',
+            img: img.src
+        };
+
+        if (!photosByStage[currentStage]) {
+            photosByStage[currentStage] = [];
+        }
+        photosByStage[currentStage].push(tmpFile);
+
+        updatePhotosContainer();
+        updateButtons();
     }
 
 function updatePhotosContainer() {
+    stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
     photosContainer.innerHTML = '';
     photosByStage[currentStage].forEach((photoSrc, index) => {
         const photoContainer = document.createElement('div');
