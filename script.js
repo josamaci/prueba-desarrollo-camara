@@ -21,6 +21,7 @@ const deleteModalClose = document.getElementById('deleteModalClose');
 const cancelDeleteButton = document.getElementById('cancelDeleteButton');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 let photoToDeleteIndex = -1;
+let cantidadTMP = 0;
 
 let actualPhotoSrc = {
     nombre: '',
@@ -80,47 +81,47 @@ captureButton.addEventListener('click', () => {
 });
 
 function processPhoto() {
-    // Actualizar el título del stage inmediatamente
-    stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length + 1}/${stagesConfig[currentStage].minPhotos})`;
+    stageTitle.textContent = stagesConfig[currentStage].name + ` (${cantidadTMP + 1}/${stagesConfig[currentStage].minPhotos})`;
 
-    setTimeout(() => {
-        // Continuar con la captura y procesamiento de la foto
+    capturePhoto()
+        .then(photoData => {
+            if (!photosByStage[currentStage]) {
+                photosByStage[currentStage] = [];
+            }
+            photosByStage[currentStage].push(photoData);
+
+            // Optimización: Utiliza requestAnimationFrame para actualizar el DOM
+            requestAnimationFrame(() => {
+                updatePhotosContainer();
+                updateButtons();
+            });
+        });
+}
+
+function capturePhoto() {
+    cantidadTMP+=1;
+    return new Promise((resolve) => {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        const img = document.createElement('img');
-        img.src = canvas.toDataURL('image/png');
-        img.classList.add('photo');
-
-        const tmpFile = {
-            nombre: photosByStage[currentStage].name + (new Date().getTime()),
+        const photoData = {
+            nombre: stagesConfig[currentStage].name + (new Date().getTime()),
             notCovered: false,
             applyParts: false,
             applyLabor: false,
             damageLevel: 'Leve',
-            img: img.src
+            img: canvas.toDataURL('image/png')
         };
 
-        if (!photosByStage[currentStage]) {
-            photosByStage[currentStage] = [];
-        }
-        photosByStage[currentStage].push(tmpFile);
-
-        // Actualizar el contenedor de fotos y botones
-        updatePhotosContainer();
-        updateButtons();
-        //saveToLocalStorage();
-    }, 0.5);
+        resolve(photoData);
+    });
 }
 
-
-
-
 function updatePhotosContainer() {
-    stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
+    const fragment = document.createDocumentFragment();
     photosContainer.innerHTML = '';
     photosByStage[currentStage].forEach((photoSrc, index) => {
         const photoContainer = document.createElement('div');
@@ -132,21 +133,11 @@ function updatePhotosContainer() {
             openModal(photoSrc);
         });
 
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('deleteButton');
-        deleteButton.innerHTML = `
-            <svg viewBox="0 0 24 24">
-                <path d="M3 6h18v2H3V6zm3 3h12v12c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V9zm3 0v12h6V9H9zm1 0v10h2V9h-2zm4 0v10h2V9h-2zm1-5h-6l-1-1H5v2h14V3h-3l-1 1z"/>
-            </svg>`;
-        deleteButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deletePhoto(index);
-        });
-
         photoContainer.appendChild(img);
-        photoContainer.appendChild(deleteButton);
-        photosContainer.appendChild(photoContainer);
+        fragment.appendChild(photoContainer);
     });
+    photosContainer.appendChild(fragment);
+    
 }
 
 // Función para mostrar el modal de confirmación de eliminación
@@ -253,6 +244,7 @@ function createStageButton(stage) {
         stageButton.disabled = currentStage < stage && photosByStage[currentStage].length < stagesConfig[currentStage].minPhotos;
         stageButton.addEventListener('click', () => {
             currentStage = stage;
+            cantidadTMP = photosByStage[currentStage].length;
             stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
             updatePhotosContainer();
             highlightCurrentStageButton();
