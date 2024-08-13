@@ -80,33 +80,44 @@ captureButton.addEventListener('click', () => {
 });
 
 function processPhoto() {
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Actualizar el título del stage inmediatamente
+    stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length + 1}/${stagesConfig[currentStage].minPhotos})`;
 
-    const img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.classList.add('photo');
-    const tmpFile = {
-        nombre: photosByStage[currentStage].name + (new Date().getTime()),
-        notCovered: false,
-        applyParts: false,
-        applyLabor: false,
-        damageLevel: 'Leve',
-        img: img.src
-    };
+    setTimeout(() => {
+        // Continuar con la captura y procesamiento de la foto
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    if (!photosByStage[currentStage]) {
-        photosByStage[currentStage] = [];
-    }
-    photosByStage[currentStage].push(tmpFile);
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL('image/png');
+        img.classList.add('photo');
 
-    updatePhotosContainer();
-    updateButtons();
-    //saveToLocalStorage();
+        const tmpFile = {
+            nombre: photosByStage[currentStage].name + (new Date().getTime()),
+            notCovered: false,
+            applyParts: false,
+            applyLabor: false,
+            damageLevel: 'Leve',
+            img: img.src
+        };
+
+        if (!photosByStage[currentStage]) {
+            photosByStage[currentStage] = [];
+        }
+        photosByStage[currentStage].push(tmpFile);
+
+        // Actualizar el contenedor de fotos y botones
+        updatePhotosContainer();
+        updateButtons();
+        //saveToLocalStorage();
+    }, 0.5);
 }
+
+
+
 
 function updatePhotosContainer() {
     stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
