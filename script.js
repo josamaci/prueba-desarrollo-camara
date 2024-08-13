@@ -67,31 +67,6 @@ stagesConfig.forEach((stage, index) => {
     photosByStage[index] = [];
 });
 
-/*function saveToLocalStorage() {
-    localStorage.setItem('photosByStage', JSON.stringify(photosByStage));
-    localStorage.setItem('currentStage', currentStage);
-}*/
-
-/*function loadFromLocalStorage() {
-    const storedPhotosByStage = localStorage.getItem('photosByStage');
-    const storedCurrentStage = localStorage.getItem('currentStage');
-
-    if (storedPhotosByStage) {
-        photosByStage = JSON.parse(storedPhotosByStage);
-    } else {
-        photosByStage = {};
-        stagesConfig.forEach((stage, index) => {
-            photosByStage[index] = [];
-        });
-    }
-
-    if (storedCurrentStage) {
-        currentStage = parseInt(storedCurrentStage, 10);
-    }
-}*/
-
-//loadFromLocalStorage();
-
 navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 4096 }, height: { ideal: 2160 } } })
     .then(stream => {
         video.srcObject = stream;
@@ -100,52 +75,38 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width:
         console.error('Error accessing the camera', error);
     });
 
-    /*function showLoader() {
-        loaderContainer.style.display = 'flex';
-        console.log(loaderContainer.style.display+" MOSTRAR "+ new Date().getTime())
-        captureButton.disabled = true;
+captureButton.addEventListener('click', () => {
+    processPhoto();
+});
+
+function processPhoto() {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.classList.add('photo');
+    const tmpFile = {
+        nombre: photosByStage[currentStage].name + (new Date().getTime()),
+        notCovered: false,
+        applyParts: false,
+        applyLabor: false,
+        damageLevel: 'Leve',
+        img: img.src
+    };
+
+    if (!photosByStage[currentStage]) {
+        photosByStage[currentStage] = [];
     }
-    
-    function hideLoader() {
-        loaderContainer.style.display = 'none';
-        console.log(loaderContainer.style.display+" ESCONDER "+ new Date().getTime())
-        captureButton.disabled = false;
-    }*/
-    
-    captureButton.addEventListener('click', () => {
-        processPhoto();
-    });
-    
-    //onclick="showLoader()";
+    photosByStage[currentStage].push(tmpFile);
 
-    function processPhoto() {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        const img = document.createElement('img');
-        img.src = canvas.toDataURL('image/png');
-        img.classList.add('photo');
-        const tmpFile = {
-            nombre: photosByStage[currentStage].name + (new Date().getTime()),
-            notCovered: false,
-            applyParts: false,
-            applyLabor: false,
-            damageLevel: 'Leve',
-            img: img.src
-        };
-
-        if (!photosByStage[currentStage]) {
-            photosByStage[currentStage] = [];
-        }
-        photosByStage[currentStage].push(tmpFile);
-
-        updatePhotosContainer();
-        updateButtons();
-        //saveToLocalStorage();
-    }
+    updatePhotosContainer();
+    updateButtons();
+    //saveToLocalStorage();
+}
 
 function updatePhotosContainer() {
     stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
@@ -291,18 +252,6 @@ function createStageButton(stage) {
     highlightCurrentStageButton();
 }
 
-/*function loadStateFromLocalStorage() {
-    const savedState = localStorage.getItem('photoAppState');
-    if (savedState) {
-        const state = JSON.parse(savedState);
-        photosByStage = state.photosByStage || {};
-        currentStage = state.currentStage || 0;
-        stageTitle.textContent = stagesConfig[currentStage].name;
-        updatePhotosContainer();
-        highlightCurrentStageButton();
-    }
-}*/
-
 // Highlight the current stage button
 function highlightCurrentStageButton() {
     const buttons = document.querySelectorAll('.stageButton');
@@ -319,8 +268,43 @@ function highlightCurrentStageButton() {
 stagesConfig.forEach((stage, index) => {
     if (index === 0) {
         stageTitle.textContent = stagesConfig[index].name + ` (${photosByStage[index].length}/${stagesConfig[index].minPhotos})`;
-        //stageTitle.textContent = stage.name;
     }
     createStageButton(index);
 });
 
+/*function saveToLocalStorage() {
+    localStorage.setItem('photosByStage', JSON.stringify(photosByStage));
+    localStorage.setItem('currentStage', currentStage);
+}*/
+
+/*function loadStateFromLocalStorage() {
+    const savedState = localStorage.getItem('photoAppState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        photosByStage = state.photosByStage || {};
+        currentStage = state.currentStage || 0;
+        stageTitle.textContent = stagesConfig[currentStage].name;
+        updatePhotosContainer();
+        highlightCurrentStageButton();
+    }
+}
+
+function loadFromLocalStorage() {
+    const storedPhotosByStage = localStorage.getItem('photosByStage');
+    const storedCurrentStage = localStorage.getItem('currentStage');
+
+    if (storedPhotosByStage) {
+        photosByStage = JSON.parse(storedPhotosByStage);
+    } else {
+        photosByStage = {};
+        stagesConfig.forEach((stage, index) => {
+            photosByStage[index] = [];
+        });
+    }
+
+    if (storedCurrentStage) {
+        currentStage = parseInt(storedCurrentStage, 10);
+    }
+}*/
+
+//loadFromLocalStorage();
