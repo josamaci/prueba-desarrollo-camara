@@ -90,13 +90,12 @@ function processPhoto() {
             }
             photosByStage[currentStage].push(photoData);
 
-            // Optimización: Utiliza requestAnimationFrame para actualizar el DOM
-            requestAnimationFrame(() => {
-                updatePhotosContainer();
-                updateButtons();
-            });
+            appendPhotoToContainer(photoData);
+            updateButtons();
         });
 }
+
+
 
 function capturePhoto() {
     cantidadTMP+=1;
@@ -120,24 +119,27 @@ function capturePhoto() {
     });
 }
 
-function updatePhotosContainer() {
-    const fragment = document.createDocumentFragment();
-    photosContainer.innerHTML = '';
-    photosByStage[currentStage].forEach((photoSrc, index) => {
-        const photoContainer = document.createElement('div');
-        photoContainer.classList.add('photoContainer');
-        const img = document.createElement('img');
-        img.src = photoSrc.img;
-        img.classList.add('photo');
-        img.addEventListener('click', () => {
-            openModal(photoSrc);
-        });
+function appendPhotoToContainer(photoData) {
+    const photoContainer = document.createElement('div');
+    photoContainer.classList.add('photoContainer');
 
-        photoContainer.appendChild(img);
-        fragment.appendChild(photoContainer);
+    const img = document.createElement('img');
+    img.src = photoData.img;
+    img.classList.add('photo');
+    img.addEventListener('click', () => {
+        openModal(photoData);
     });
-    photosContainer.appendChild(fragment);
-    
+
+    photoContainer.appendChild(img);
+    photosContainer.appendChild(photoContainer);
+
+}
+
+function updatePhotosContainer() {
+    photosContainer.innerHTML = '';
+    photosByStage[currentStage].forEach(photoData => {
+        appendPhotoToContainer(photoData);
+    });
 }
 
 // Función para mostrar el modal de confirmación de eliminación
