@@ -68,7 +68,7 @@ stagesConfig.forEach((stage, index) => {
     photosByStage[index] = [];
 });
 
-navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 4096 }, height: { ideal: 2160 } } })
+navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 2048 }, height: { ideal: 1080 } } })
     .then(stream => {
         video.srcObject = stream;
     })
@@ -120,27 +120,34 @@ function capturePhoto() {
 }
 
 function appendPhotoToContainer(photoData) {
-    const photoContainer = document.createElement('div');
-    photoContainer.classList.add('photoContainer');
+    requestIdleCallback(() => {
+        const photoContainer = document.createElement('div');
+        photoContainer.classList.add('photoContainer');
 
-    const img = document.createElement('img');
-    img.src = photoData.img;
-    img.classList.add('photo');
-    img.addEventListener('click', () => {
-        openModal(photoData);
+        const img = document.createElement('img');
+        img.src = photoData.img;
+        img.classList.add('photo');
+        img.addEventListener('click', () => {
+            openModal(photoData);
+        });
+
+        photoContainer.appendChild(img);
+        photosContainer.appendChild(photoContainer);
     });
-
-    photoContainer.appendChild(img);
-    photosContainer.appendChild(photoContainer);
-
 }
 
+
+let debounceTimeout;
 function updatePhotosContainer() {
-    photosContainer.innerHTML = '';
-    photosByStage[currentStage].forEach(photoData => {
-        appendPhotoToContainer(photoData);
-    });
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+        photosContainer.innerHTML = '';
+        photosByStage[currentStage].forEach(photoData => {
+            appendPhotoToContainer(photoData);
+        });
+    }, 50);  
 }
+
 
 // Función para mostrar el modal de confirmación de eliminación
 function showDeleteConfirmationModal(index) {
