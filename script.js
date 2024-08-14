@@ -90,7 +90,7 @@ function processPhoto() {
             }
             photosByStage[currentStage].push(photoData);
 
-            appendPhotoToContainer(photoData);
+            appendPhotoToContainer(photoData, photosByStage[currentStage].length-1);
             updateButtons();
         });
 }
@@ -119,7 +119,7 @@ function capturePhoto() {
     });
 }
 
-function appendPhotoToContainer(photoData) {
+function appendPhotoToContainer(photoData, index) {
     requestIdleCallback(() => {
         const photoContainer = document.createElement('div');
         photoContainer.classList.add('photoContainer');
@@ -131,21 +131,32 @@ function appendPhotoToContainer(photoData) {
             openModal(photoData);
         });
 
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('deleteButton');
+        deleteButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm3 3h12v12c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V9zm3 0v12h6V9H9zm1 0v10h2V9h-2zm4 0v10h2V9h-2zm1-5h-6l-1-1H5v2h14V3h-3l-1 1z"/></svg>';
+        deleteButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deletePhoto(index);
+        });
+
         photoContainer.appendChild(img);
+        photoContainer.appendChild(deleteButton);
         photosContainer.appendChild(photoContainer);
     });
 }
 
 
-let debounceTimeout;
+let debounceTimeout=0;
 function updatePhotosContainer() {
+    console.log(debounceTimeout)
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
         photosContainer.innerHTML = '';
-        photosByStage[currentStage].forEach(photoData => {
-            appendPhotoToContainer(photoData);
+        photosByStage[currentStage].forEach((photoData, index) => {
+            appendPhotoToContainer(photoData, index);
         });
     }, 50);  
+    console.log(debounceTimeout)
 }
 
 
