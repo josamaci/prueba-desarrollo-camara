@@ -6,7 +6,6 @@ const stageNavigation = document.getElementById('stageNavigation');
 
 const modalBackground = document.getElementById('modalBackground');
 const modal = document.getElementById('modal');
-const modalImage = document.getElementById('modalImage');
 const modalClose = document.getElementById('modalClose');
 const modalCloseButton = document.getElementById('modalCloseButton');
 const modalSaveButton = document.getElementById('modalSaveButton');
@@ -22,6 +21,8 @@ const cancelDeleteButton = document.getElementById('cancelDeleteButton');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 let photoToDeleteIndex = -1;
 let cantidadTMP = 0;
+let canvas = new fabric.Canvas('fabricCanvas');
+let currentImage = null;
 
 let actualPhotoSrc = {
     nombre: '',
@@ -179,6 +180,7 @@ cancelDeleteButton.addEventListener('click', hideDeleteConfirmationModal);
 confirmDeleteButton.addEventListener('click', () => {
     if (photoToDeleteIndex !== -1) {
         photosByStage[currentStage].splice(photoToDeleteIndex, 1);
+        stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
         updatePhotosContainer();
         updateButtons();
     }
@@ -194,7 +196,23 @@ function openModal(photoSrc) {
     actualPhotoSrc = photoSrc;
     modalBackground.style.display = 'block';
     modal.style.display = 'block';
-    modalImage.src = photoSrc.img;
+    const currentImage = new Image();
+    currentImage.src = photoSrc.img;
+    let width = currentImage.width;
+    let height = currentImage.height;
+
+    const imgInstance = new fabric.Image(currentImage, {
+        left: 0,
+        top: 0,
+        selectable: false
+    });
+    canvas.clear();
+    canvas.setWidth(width);
+    canvas.setHeight(height);
+    canvas.calcOffset();
+    canvas.add(imgInstance);
+    canvas.renderAll();
+
     const photoNumber = photosByStage[currentStage].indexOf(photoSrc);
     notCoveredCheckbox.checked = photosByStage[currentStage][photoNumber].notCovered;
     additionalOptions.style.display = notCoveredCheckbox.checked ? 'block':'none';
@@ -216,13 +234,28 @@ notCoveredCheckbox.addEventListener('change', () => {
 });
 
 modalClose.addEventListener('click', () => {
+    canvas.clear();
     modalBackground.style.display = 'none';
     modal.style.display = 'none';
 });
 
 modalCloseButton.addEventListener('click', () => {
+    canvas.clear();
     modalBackground.style.display = 'none';
     modal.style.display = 'none';
+});
+
+document.getElementById('addCircleButton').addEventListener('click', function() {
+    const circle = new fabric.Circle({
+        radius: 50,
+        stroke: 'red',
+        strokeWidth: 2,
+        fill: "#00000000",
+        left: 100,
+        top: 100,
+        selectable: true
+    });
+    canvas.add(circle);
 });
 
 modalSaveButton.addEventListener('click', () => {
@@ -231,8 +264,12 @@ modalSaveButton.addEventListener('click', () => {
     photosByStage[currentStage][photoNumber].applyParts = applyPartsCheckbox.checked;
     photosByStage[currentStage][photoNumber].applyLabor = applyLaborCheckbox.checked;
     photosByStage[currentStage][photoNumber].damageLevel = damageLevelSelect.value;
+    console.log(photosByStage[currentStage][photoNumber]);
+    photosByStage[currentStage][photoNumber].img = canvas.toDataURL('image/png');
+    updatePhotosContainer();
     modalBackground.style.display = 'none';
     modal.style.display = 'none';
+    canvas.clear();
 });
 
 function updateButtons() {
@@ -294,6 +331,18 @@ stagesConfig.forEach((stage, index) => {
     }
     createStageButton(index);
 });
+
+document.getElementById('deleteObjectButton').addEventListener('click', () => {
+    deleteSelectedObject();
+});
+
+function deleteSelectedObject() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.remove(activeObject);
+        canvas.renderAll();
+    }
+}
 
 /*function saveToLocalStorage() {
     localStorage.setItem('photosByStage', JSON.stringify(photosByStage));
