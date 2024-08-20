@@ -124,8 +124,8 @@ h1, h2 {
     top: 50%;
     font-size: 1.25rem;
     transform: translate(-50%, -50%);
-    max-width: 95%;
-    max-height: 95%;
+    max-width: 80%;
+    max-height: 90%;
     background-color: rgba(255, 255, 255, 0.897);
     border-radius: 10px;
     overflow: auto;

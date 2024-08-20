@@ -21,7 +21,7 @@ const cancelDeleteButton = document.getElementById('cancelDeleteButton');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 let photoToDeleteIndex = -1;
 let cantidadTMP = 0;
-const canvasWidth = window.innerWidth * 0.80;
+const canvasWidth = window.innerWidth * 0.60;
 const canvasHeight = window.innerHeight;
 let canvas = new fabric.Canvas('fabricCanvas');
 let currentImage = null;
@@ -340,6 +340,7 @@ function createStageButton(stage) {
         stageButton.id = `stageButton${stage}`;
         stageButton.textContent = stagesConfig[stage].name;
         stageButton.classList.add('stageButton');
+        stageButton.classList.add('btn');
         stageButton.disabled = currentStage < stage && photosByStage[currentStage].length < stagesConfig[currentStage].minPhotos;
         stageButton.addEventListener('click', () => {
             currentStage = stage;
