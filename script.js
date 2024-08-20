@@ -21,6 +21,8 @@ const cancelDeleteButton = document.getElementById('cancelDeleteButton');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 let photoToDeleteIndex = -1;
 let cantidadTMP = 0;
+const canvasWidth = window.innerWidth * 0.95;
+const canvasHeight = window.innerHeight;
 let canvas = new fabric.Canvas('fabricCanvas');
 let currentImage = null;
 
@@ -149,7 +151,6 @@ function appendPhotoToContainer(photoData, index) {
 
 let debounceTimeout=0;
 function updatePhotosContainer() {
-    console.log(debounceTimeout)
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
         photosContainer.innerHTML = '';
@@ -157,7 +158,6 @@ function updatePhotosContainer() {
             appendPhotoToContainer(photoData, index);
         });
     }, 50);  
-    console.log(debounceTimeout)
 }
 
 
@@ -191,6 +191,10 @@ function deletePhoto(index) {
     showDeleteConfirmationModal(index);
 }
 
+let contadorCirculo=0;
+let originalDataURL = "";
+let width = 0;
+let height = 0;
 function openModal(photoSrc) {
     console.log(photoSrc)
     actualPhotoSrc = photoSrc;
@@ -198,29 +202,80 @@ function openModal(photoSrc) {
     modal.style.display = 'block';
     const currentImage = new Image();
     currentImage.src = photoSrc.img;
-    let width = currentImage.width;
-    let height = currentImage.height;
 
-    const imgInstance = new fabric.Image(currentImage, {
-        left: 0,
-        top: 0,
-        selectable: false
-    });
-    canvas.clear();
-    canvas.setWidth(width);
-    canvas.setHeight(height);
-    canvas.calcOffset();
-    canvas.add(imgInstance);
-    canvas.renderAll();
-
-    const photoNumber = photosByStage[currentStage].indexOf(photoSrc);
-    notCoveredCheckbox.checked = photosByStage[currentStage][photoNumber].notCovered;
-    additionalOptions.style.display = notCoveredCheckbox.checked ? 'block':'none';
-    applyPartsCheckbox.checked = photosByStage[currentStage][photoNumber].applyParts;
-    applyLaborCheckbox.checked = photosByStage[currentStage][photoNumber].applyLabor;
-    damageLevelSelect.value = photosByStage[currentStage][photoNumber].damageLevel; // Default value
-    
+    currentImage.onload = () => {
+        originalDataURL = photoSrc.img;
+        width = currentImage.width;
+        height = currentImage.height;
+        contadorCirculo = 0;
+        const scaleFactor = Math.min(canvasWidth / width, canvasHeight / height);
+        const imgInstance = new fabric.Image(currentImage, {
+            left: 0,
+            top: 0,
+            scaleX: scaleFactor,
+            scaleY: scaleFactor,
+            selectable: false
+        });
+        canvas.clear();
+        canvas.setWidth(canvasWidth);
+        canvas.setHeight((height * scaleFactor));
+        canvas.add(imgInstance);
+        canvas.renderAll();
+        const photoNumber = photosByStage[currentStage].indexOf(photoSrc);
+        notCoveredCheckbox.checked = photosByStage[currentStage][photoNumber].notCovered;
+        additionalOptions.style.display = notCoveredCheckbox.checked ? 'block' : 'none';
+        applyPartsCheckbox.checked = photosByStage[currentStage][photoNumber].applyParts;
+        applyLaborCheckbox.checked = photosByStage[currentStage][photoNumber].applyLabor;
+        damageLevelSelect.value = photosByStage[currentStage][photoNumber].damageLevel;
+    }
 }
+
+modalSaveButton.addEventListener('click', () => {
+    const photoNumber = photosByStage[currentStage].indexOf(actualPhotoSrc);
+
+    photosByStage[currentStage][photoNumber].notCovered = notCoveredCheckbox.checked;
+    photosByStage[currentStage][photoNumber].applyParts = applyPartsCheckbox.checked;
+    photosByStage[currentStage][photoNumber].applyLabor = applyLaborCheckbox.checked;
+    photosByStage[currentStage][photoNumber].damageLevel = damageLevelSelect.value;
+    const photoTMP = photosByStage[currentStage][photoNumber];
+
+    if (contadorCirculo > 0) {
+        const canvasImage = new Image();
+        canvasImage.src = canvas.toDataURL('image/png');
+
+        canvasImage.onload = () => {
+            const originalCanvas = document.createElement('canvas');
+            originalCanvas.width = width;
+            originalCanvas.height = height;
+            const originalContext = originalCanvas.getContext('2d');
+            originalContext.drawImage(canvasImage, 0, 0, canvas.width, canvas.height, 0, 0, originalCanvas.width, originalCanvas.height);
+            const editedImageDataURL = originalCanvas.toDataURL('image/png');
+
+            const photoDataTMP = {
+                nombre: photoTMP.nombre + "_edited",
+                notCovered: photoTMP.notCovered,
+                applyParts: photoTMP.applyParts,
+                applyLabor: photoTMP.applyLabor,
+                damageLevel: photoTMP.damageLevel,
+                img: editedImageDataURL
+            };
+
+            photosByStage[currentStage].push(photoDataTMP);
+            stageTitle.textContent = stagesConfig[currentStage].name + ` (${photosByStage[currentStage].length}/${stagesConfig[currentStage].minPhotos})`;
+            appendPhotoToContainer(photoDataTMP, photosByStage[currentStage].length - 1);
+            updateButtons();
+            updatePhotosContainer();
+        };
+
+        canvasImage.onerror = (error) => {
+            console.error("Error al cargar la imagen del canvas:", error);
+        };
+    }
+
+    modalBackground.style.display = 'none';
+    modal.style.display = 'none';
+    canvas.clear();
+});
 
 notCoveredCheckbox.addEventListener('change', () => {
     if (notCoveredCheckbox.checked) {
@@ -255,21 +310,8 @@ document.getElementById('addCircleButton').addEventListener('click', function() 
         top: 100,
         selectable: true
     });
+    contadorCirculo++;
     canvas.add(circle);
-});
-
-modalSaveButton.addEventListener('click', () => {
-    let photoNumber = photosByStage[currentStage].indexOf(actualPhotoSrc)
-    photosByStage[currentStage][photoNumber].notCovered = notCoveredCheckbox.checked;
-    photosByStage[currentStage][photoNumber].applyParts = applyPartsCheckbox.checked;
-    photosByStage[currentStage][photoNumber].applyLabor = applyLaborCheckbox.checked;
-    photosByStage[currentStage][photoNumber].damageLevel = damageLevelSelect.value;
-    console.log(photosByStage[currentStage][photoNumber]);
-    photosByStage[currentStage][photoNumber].img = canvas.toDataURL('image/png');
-    updatePhotosContainer();
-    modalBackground.style.display = 'none';
-    modal.style.display = 'none';
-    canvas.clear();
 });
 
 function updateButtons() {
@@ -339,44 +381,8 @@ document.getElementById('deleteObjectButton').addEventListener('click', () => {
 function deleteSelectedObject() {
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
+        contadorCirculo--;
         canvas.remove(activeObject);
         canvas.renderAll();
     }
 }
-
-/*function saveToLocalStorage() {
-    localStorage.setItem('photosByStage', JSON.stringify(photosByStage));
-    localStorage.setItem('currentStage', currentStage);
-}*/
-
-/*function loadStateFromLocalStorage() {
-    const savedState = localStorage.getItem('photoAppState');
-    if (savedState) {
-        const state = JSON.parse(savedState);
-        photosByStage = state.photosByStage || {};
-        currentStage = state.currentStage || 0;
-        stageTitle.textContent = stagesConfig[currentStage].name;
-        updatePhotosContainer();
-        highlightCurrentStageButton();
-    }
-}
-
-function loadFromLocalStorage() {
-    const storedPhotosByStage = localStorage.getItem('photosByStage');
-    const storedCurrentStage = localStorage.getItem('currentStage');
-
-    if (storedPhotosByStage) {
-        photosByStage = JSON.parse(storedPhotosByStage);
-    } else {
-        photosByStage = {};
-        stagesConfig.forEach((stage, index) => {
-            photosByStage[index] = [];
-        });
-    }
-
-    if (storedCurrentStage) {
-        currentStage = parseInt(storedCurrentStage, 10);
-    }
-}*/
-
-//loadFromLocalStorage();
