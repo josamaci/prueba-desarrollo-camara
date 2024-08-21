@@ -3,7 +3,6 @@ const captureButton = document.getElementById('captureButton');
 const photosContainer = document.getElementById('photos');
 const stageTitle = document.getElementById('stageTitle');
 const stageNavigation = document.getElementById('stageNavigation');
-
 const modalBackground = document.getElementById('modalBackground');
 const modal = document.getElementById('modal');
 const modalClose = document.getElementById('modalClose');
@@ -19,12 +18,7 @@ const deleteConfirmationModal = document.getElementById('deleteConfirmationModal
 const deleteModalClose = document.getElementById('deleteModalClose');
 const cancelDeleteButton = document.getElementById('cancelDeleteButton');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-let photoToDeleteIndex = -1;
-let cantidadTMP = 0;
-const canvasWidth = window.innerWidth * 0.60;
-const canvasHeight = window.innerHeight;
 let canvas = new fabric.Canvas('fabricCanvas');
-let currentImage = null;
 
 let actualPhotoSrc = {
     nombre: '',
@@ -63,9 +57,19 @@ const stagesConfig = [
 
 ];
 
+let photoToDeleteIndex = -1;
+let cantidadTMP = 0;
+const canvasWidth = window.innerWidth * 0.75;
+const canvasHeight = window.innerHeight;
 let photosByStage = {};
 const maxStages = stagesConfig.length;
 let currentStage = 0;
+let currentImage = null;
+let debounceTimeout=0;
+let contadorCirculo=0;
+let originalDataURL = "";
+let width = 0;
+let height = 0;
 
 stagesConfig.forEach((stage, index) => {
     photosByStage[index] = [];
@@ -85,7 +89,6 @@ captureButton.addEventListener('click', () => {
 
 function processPhoto() {
     stageTitle.textContent = stagesConfig[currentStage].name + ` (${cantidadTMP + 1}/${stagesConfig[currentStage].minPhotos})`;
-
     capturePhoto()
         .then(photoData => {
             if (!photosByStage[currentStage]) {
@@ -97,8 +100,6 @@ function processPhoto() {
             updateButtons();
         });
 }
-
-
 
 function capturePhoto() {
     cantidadTMP+=1;
@@ -148,8 +149,6 @@ function appendPhotoToContainer(photoData, index) {
     });
 }
 
-
-let debounceTimeout=0;
 function updatePhotosContainer() {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
@@ -160,15 +159,12 @@ function updatePhotosContainer() {
     }, 50);  
 }
 
-
-// Función para mostrar el modal de confirmación de eliminación
 function showDeleteConfirmationModal(index) {
     photoToDeleteIndex = index;
     modalBackground.style.display = 'block';
     deleteConfirmationModal.style.display = 'block';
 }
 
-// Función para ocultar el modal de confirmación de eliminación
 function hideDeleteConfirmationModal() {
     modalBackground.style.display = 'none';
     deleteConfirmationModal.style.display = 'none';
@@ -191,10 +187,6 @@ function deletePhoto(index) {
     showDeleteConfirmationModal(index);
 }
 
-let contadorCirculo=0;
-let originalDataURL = "";
-let width = 0;
-let height = 0;
 function openModal(photoSrc) {
     console.log(photoSrc)
     actualPhotoSrc = photoSrc;
@@ -355,7 +347,6 @@ function createStageButton(stage) {
     highlightCurrentStageButton();
 }
 
-// Highlight the current stage button
 function highlightCurrentStageButton() {
     const buttons = document.querySelectorAll('.stageButton');
     buttons.forEach(button => {
@@ -367,7 +358,6 @@ function highlightCurrentStageButton() {
     }
 }
 
-// Initialize stage navigation
 stagesConfig.forEach((stage, index) => {
     if (index === 0) {
         stageTitle.textContent = stagesConfig[index].name + ` (${photosByStage[index].length}/${stagesConfig[index].minPhotos})`;
