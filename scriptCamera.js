@@ -59,7 +59,7 @@ const stagesConfig = [
 
 let photoToDeleteIndex = -1;
 let cantidadTMP = 0;
-const canvasWidth = window.innerWidth * 0.75;
+const canvasWidth = window.innerWidth * 0.80;
 const canvasHeight = window.innerHeight;
 let photosByStage = {};
 const maxStages = stagesConfig.length;
