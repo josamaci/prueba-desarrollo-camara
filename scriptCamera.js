@@ -201,8 +201,10 @@ function openModal(photoSrc) {
         height = currentImage.height;
         contadorCirculo = 0;
         let scaleFactor = canvasHeight / height;
-        if(height > width){
+        console.log(scaleFactor+" canvasHeight")
+        if(canvasHeight > canvasWidth){
             scaleFactor = canvasWidth / width;
+            console.log(scaleFactor+" canvasWidth")
         }
         const imgInstance = new fabric.Image(currentImage, {
             left: 0,
@@ -212,8 +214,8 @@ function openModal(photoSrc) {
             selectable: false
         });
         canvas.clear();
-        canvas.setWidth(canvasWidth);
-        canvas.setHeight((canvasHeight));
+        canvas.setWidth(width*scaleFactor);
+        canvas.setHeight((height*scaleFactor));
         canvas.add(imgInstance);
         canvas.renderAll();
         const photoNumber = photosByStage[currentStage].indexOf(photoSrc);
