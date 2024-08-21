@@ -59,8 +59,8 @@ const stagesConfig = [
 
 let photoToDeleteIndex = -1;
 let cantidadTMP = 0;
-const canvasWidth = window.innerWidth;
-const canvasHeight = window.innerHeight *0.8;
+const canvasWidth = window.innerWidth * 0.85;
+const canvasHeight = window.innerHeight * 0.85;
 let photosByStage = {};
 const maxStages = stagesConfig.length;
 let currentStage = 0;
@@ -200,17 +200,16 @@ function openModal(photoSrc) {
         width = currentImage.width;
         height = currentImage.height;
         contadorCirculo = 0;
-        const scaleFactor = Math.min(canvasWidth / width, canvasHeight / height);
         const imgInstance = new fabric.Image(currentImage, {
             left: 0,
             top: 0,
-            scaleX: scaleFactor,
-            scaleY: scaleFactor,
+            scaleX: canvasWidth / width,
+            scaleY: canvasHeight / height,
             selectable: false
         });
         canvas.clear();
         canvas.setWidth(canvasWidth);
-        canvas.setHeight((height * scaleFactor));
+        canvas.setHeight((canvasHeight));
         canvas.add(imgInstance);
         canvas.renderAll();
         const photoNumber = photosByStage[currentStage].indexOf(photoSrc);
