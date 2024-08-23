@@ -10,8 +10,8 @@ const modalCloseButton = document.getElementById('modalCloseButton');
 const modalSaveButton = document.getElementById('modalSaveButton');
 const notCoveredCheckbox = document.getElementById('notCoveredCheckbox');
 const additionalOptions = document.getElementById('additionalOptions');
-const applyPartsCheckbox = document.getElementById('applyPartsCheckbox');
-const applyLaborCheckbox = document.getElementById('applyLaborCheckbox');
+//const applyPartsCheckbox = document.getElementById('applyPartsCheckbox');
+//const applyLaborCheckbox = document.getElementById('applyLaborCheckbox');
 const damageLevelSelect = document.getElementById('damageLevel');
 const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
 const deleteModalClose = document.getElementById('deleteModalClose');
@@ -22,8 +22,8 @@ let canvas = new fabric.Canvas('fabricCanvas');
 let actualPhotoSrc = {
     nombre: '',
     notCovered: false,
-    applyParts: false,
-    applyLabor: false,
+    //applyParts: false,
+    //applyLabor: false,
     damageLevel: 'Leve',
     img: new Image()
 };
@@ -212,8 +212,8 @@ function openModal(photoSrc) {
         const photoNumber = photosByStage[currentStage].indexOf(photoSrc);
         notCoveredCheckbox.checked = photosByStage[currentStage][photoNumber].notCovered;
         additionalOptions.style.display = notCoveredCheckbox.checked ? 'block' : 'none';
-        applyPartsCheckbox.checked = photosByStage[currentStage][photoNumber].applyParts;
-        applyLaborCheckbox.checked = photosByStage[currentStage][photoNumber].applyLabor;
+        //applyPartsCheckbox.checked = photosByStage[currentStage][photoNumber].applyParts;
+        //.checked = photosByStage[currentStage][photoNumber].applyLabor;
         damageLevelSelect.value = photosByStage[currentStage][photoNumber].damageLevel;
     }
 }
@@ -222,8 +222,8 @@ modalSaveButton.addEventListener('click', () => {
     const photoNumber = photosByStage[currentStage].indexOf(actualPhotoSrc);
 
     photosByStage[currentStage][photoNumber].notCovered = notCoveredCheckbox.checked;
-    photosByStage[currentStage][photoNumber].applyParts = applyPartsCheckbox.checked;
-    photosByStage[currentStage][photoNumber].applyLabor = applyLaborCheckbox.checked;
+    //photosByStage[currentStage][photoNumber].applyParts = applyPartsCheckbox.checked;
+    //photosByStage[currentStage][photoNumber].applyLabor = applyLaborCheckbox.checked;
     photosByStage[currentStage][photoNumber].damageLevel = damageLevelSelect.value;
     const photoTMP = photosByStage[currentStage][photoNumber];
 
@@ -270,8 +270,8 @@ notCoveredCheckbox.addEventListener('change', () => {
         additionalOptions.style.display = 'block';
     } else {
         additionalOptions.style.display = 'none';
-        applyPartsCheckbox.checked=false;
-        applyLaborCheckbox.checked=false;
+        //applyPartsCheckbox.checked=false;
+        //applyLaborCheckbox.checked=false;
         damageLevelSelect.value='Leve';
     }
 });
