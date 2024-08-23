@@ -13,7 +13,6 @@ const additionalOptions = document.getElementById('additionalOptions');
 const applyPartsCheckbox = document.getElementById('applyPartsCheckbox');
 const applyLaborCheckbox = document.getElementById('applyLaborCheckbox');
 const damageLevelSelect = document.getElementById('damageLevel');
-const loaderContainer = document.getElementById('loaderContainer');
 const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
 const deleteModalClose = document.getElementById('deleteModalClose');
 const cancelDeleteButton = document.getElementById('cancelDeleteButton');
@@ -30,30 +29,22 @@ let actualPhotoSrc = {
 };
 
 const stagesConfig = [
-    { name: 'Patente Trasera', minPhotos: 1 },
-    { name: 'Trasera', minPhotos: 2 },
-    { name: 'Lateral Trasero', minPhotos: 2 },
-    { name: 'Neumatico Trasero', minPhotos: 1 },
-    { name: 'Puerta Trasera', minPhotos: 1 },
-    { name: 'Puerta Delantera', minPhotos: 1 },
-    { name: 'Costado Delantero', minPhotos: 1 },
-    { name: 'Patente Delantera', minPhotos: 1 },
-    { name: 'Frontal', minPhotos: 1 },
-    { name: 'Capot', minPhotos: 1 },
+    { name: 'Frente', minPhotos: 5 },
     { name: 'Parabrisas', minPhotos: 1 },
-    { name: 'Neumatico Delantero', minPhotos: 1 },
-    { name: 'Costado Delantero', minPhotos: 1 },
-    { name: 'Puerta Delantera', minPhotos: 1 },
-    { name: 'Puerta Trasera', minPhotos: 1 },
-    { name: 'Costado Trasero', minPhotos: 1 },
-    { name: 'Panel', minPhotos: 1 },
-    { name: 'Kilometraje', minPhotos: 1 },
-    { name: 'Palanca de Cambios', minPhotos: 1 },
-    { name: 'Asientos', minPhotos: 2 },
-    { name: 'Techo Interior', minPhotos: 2 },
-    { name: 'Extintor', minPhotos: 1 },
-    { name: 'Rueda Repuesto', minPhotos: 1 },
-    { name: 'Herramientas', minPhotos: 1 }
+    { name: 'Tapabarro izq', minPhotos: 6 },
+    { name: 'Costado izq', minPhotos: 7 },
+    { name: 'Trasera', minPhotos: 5 },
+    { name: 'Costado der', minPhotos: 6 },
+    { name: 'Tapabarro der', minPhotos: 7 },
+    { name: 'Motor', minPhotos: 4 },
+    { name: 'Interior del izq', minPhotos: 4 },
+    { name: 'Consola', minPhotos: 8 },
+    { name: 'Llave', minPhotos: 1 },
+    { name: 'Interior tra izq', minPhotos: 4 },
+    { name: 'Trasera interior', minPhotos: 3 },
+    { name: 'Rueda repuesto', minPhotos: 1 },
+    { name: 'Interior tra der', minPhotos: 4 },
+    { name: 'Interior del der', minPhotos: 4 },
 
 ];
 
